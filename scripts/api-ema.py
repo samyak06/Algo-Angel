@@ -28,9 +28,9 @@ def check_red_alert(symbol, ema_window=100):
         current_price = df['CLOSE'].iloc[-1]
 
         if current_ema > current_price:
-            return f"Red Alert for {symbol}: 20 Weekly EMA Crossed LTP!"
+            return f"Red Alert for {symbol} :- 20 Weekly EMA Crossed LTP:{current_price}!"
         elif (current_price - current_ema)/current_ema <  0.05:
-            return f"Yellow Alert for {symbol}: 20 Weekly EMA closing on LTP, less than 5% away!"
+            return f"Yellow Alert for {symbol}: 20 Weekly EMA closing on LTP:{current_price}, less than 5% away!"
     
     return f"No Alert for {symbol}."
 
@@ -43,8 +43,7 @@ def red_alert():
     alerts = {}
     for symbol in symbols:
         alert = check_red_alert(symbol, ema_window)
-        if alert:
-            alerts[symbol] = alert
+        alerts[symbol] = alert
 
     return jsonify(alerts)
 
