@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Alert Checker</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <h1>Red Alert Checker</h1>
+    <form id="alertForm">
+        <label for="symbols">Symbols (comma-separated):</label>
+        <input type="text" id="symbols" name="symbols" required><br>
+        <label for="ema_window">EMA Window:</label>
+        <input type="number" id="ema_window" name="ema_window" value="100" required><br>
+        <button type="submit">Check Red Alert</button>
+    </form>
+    <div id="result"></div>
+
+    <script>
+        // Add your JavaScript code here
+        document.getElementById("alertForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+            const symbols = document.getElementById("symbols").value.split(",").map(symbol => symbol.trim());
+            const emaWindow = parseInt(document.getElementById("ema_window").value);
+            
+            fetch("/red-alert", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ symbols, ema_window: emaWindow }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById("result");
+                resultDiv.innerHTML = "";
+                for (const symbol in data) {
+                    const alert = data[symbol];
+                    const alertDiv = document.createElement("div");
+                    alertDiv.innerText = `${symbol}: ${alert}`;
+                    resultDiv.appendChild(alertDiv);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+    </script>
+</body>
+</html>
